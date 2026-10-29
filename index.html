@@ -8,8 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -25,7 +23,7 @@
       
       <!-- Logo & Status -->
       <div class="flex items-center space-x-3">
-        <div class="bg-cyan-500 text-blue-950 p-2 rounded-lg font-bold text-xl tracking-wider flex items-center gap-2">
+        <div class="bg-cyan-500 text-blue-950 p-2 rounded-lg font-bold text-xl tracking-wider flex items-center gap-2 cursor-pointer" onclick="switchTab('textbooks')">
           <i class="fa-solid fa-graduation-cap"></i> MektepHub
         </div>
         <span class="bg-blue-800 text-cyan-300 text-xs px-2.5 py-1 rounded-full flex items-center gap-1 border border-cyan-500/30">
@@ -35,7 +33,7 @@
 
       <!-- Navigation Tabs -->
       <nav class="flex space-x-1 md:space-x-2">
-        <button onclick="switchTab('textbooks')" id="tab-btn-textbooks" class="px-3 py-2 rounded-md text-sm font-medium transition bg-blue-800 text-white hover:bg-blue-700">
+        <button onclick="switchTab('textbooks')" id="tab-btn-textbooks" class="px-3 py-2 rounded-md text-sm font-medium transition bg-blue-800 text-white">
           <i class="fa-solid fa-book mr-1"></i> Учебники
         </button>
         <button onclick="switchTab('quizzes')" id="tab-btn-quizzes" class="px-3 py-2 rounded-md text-sm font-medium transition text-blue-200 hover:bg-blue-800 hover:text-white">
@@ -52,7 +50,7 @@
           <p id="user-display-name" class="text-sm font-semibold text-white">Алихан Кайдаров</p>
           <p id="user-display-sub" class="text-xs text-blue-200">10 "А" класс, Школа-гимназия №83 г. Астана</p>
         </div>
-        <select id="role-switcher" onchange="changeRole(this.value)" class="bg-blue-950 text-cyan-300 border border-blue-700 text-xs rounded-lg p-2 focus:ring-2 focus:ring-cyan-400 outline-none">
+        <select id="role-switcher" onchange="changeRole(this.value)" class="bg-blue-950 text-cyan-300 border border-blue-700 text-xs rounded-lg p-2 focus:ring-2 focus:ring-cyan-400 outline-none cursor-pointer">
           <option value="student">Роль: Ученик</option>
           <option value="teacher">Роль: Учитель</option>
           <option value="parent">Роль: Родитель</option>
@@ -75,121 +73,26 @@
         
         <!-- Filters -->
         <div class="flex flex-wrap gap-2 w-full md:w-auto">
-          <select class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            <option>Все классы (10 класс)</option>
-            <option>9 класс</option>
-            <option>10 класс</option>
-            <option>11 класс</option>
+          <select id="grade-filter" onchange="filterTextbooks()" class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="all">Все классы</option>
+            <option value="9">9 класс</option>
+            <option value="10" selected>10 класс</option>
+            <option value="11">11 класс</option>
           </select>
-          <select class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            <option>Все предметы</option>
-            <option>История Казахстана</option>
-            <option>Математика</option>
-            <option>Физика</option>
-            <option>Информатика</option>
+          <select id="subject-filter" onchange="filterTextbooks()" class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="all">Все предметы</option>
+            <option value="history">История Казахстана</option>
+            <option value="math">Алгебра и геометрия</option>
+            <option value="cs">Информатика</option>
+            <option value="physics">Физика</option>
+            <option value="geo">География</option>
           </select>
         </div>
       </div>
 
       <!-- Books Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <!-- Book Card 1 -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
-          <div class="bg-amber-600 text-white p-4 h-40 flex flex-col justify-between relative">
-            <div>
-              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
-              <h3 class="font-bold text-lg leading-tight">История Казахстана</h3>
-            </div>
-          </div>
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div class="text-xs text-slate-500 space-y-1 mb-4">
-              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Атамұра</strong></p>
-              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>12 тем</strong></p>
-            </div>
-            <div class="space-y-2">
-              <button onclick="openPdfModal('История Казахстана', 'Атамұра')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Читать PDF
-              </button>
-              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-gamepad"></i> Пройти квиз
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Card 2 -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
-          <div class="bg-blue-600 text-white p-4 h-40 flex flex-col justify-between relative">
-            <div>
-              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
-              <h3 class="font-bold text-lg leading-tight">Алгебра и начала анализа</h3>
-            </div>
-          </div>
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div class="text-xs text-slate-500 space-y-1 mb-4">
-              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Мектеп</strong></p>
-              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>15 тем</strong></p>
-            </div>
-            <div class="space-y-2">
-              <button onclick="openPdfModal('Алгебра и начала анализа', 'Мектеп')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Читать PDF
-              </button>
-              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-gamepad"></i> Пройти квиз
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Card 3 -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
-          <div class="bg-teal-600 text-white p-4 h-40 flex flex-col justify-between relative">
-            <div>
-              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
-              <h3 class="font-bold text-lg leading-tight">Информатика</h3>
-            </div>
-          </div>
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div class="text-xs text-slate-500 space-y-1 mb-4">
-              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Арман-ПВ</strong></p>
-              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>10 тем</strong></p>
-            </div>
-            <div class="space-y-2">
-              <button onclick="openPdfModal('Информатика', 'Арман-ПВ')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Читать PDF
-              </button>
-              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-gamepad"></i> Пройти квиз
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Book Card 4 -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
-          <div class="bg-indigo-600 text-white p-4 h-40 flex flex-col justify-between relative">
-            <div>
-              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
-              <h3 class="font-bold text-lg leading-tight">Физика</h3>
-            </div>
-          </div>
-          <div class="p-4 flex-grow flex flex-col justify-between">
-            <div class="text-xs text-slate-500 space-y-1 mb-4">
-              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Мектеп</strong></p>
-              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>8 тем</strong></p>
-            </div>
-            <div class="space-y-2">
-              <button onclick="openPdfModal('Физика', 'Мектеп')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Читать PDF
-              </button>
-              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-gamepad"></i> Пройти квиз
-              </button>
-            </div>
-          </div>
-        </div>
-
+      <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Rendered dynamically via JS -->
       </div>
     </section>
 
@@ -200,15 +103,17 @@
         <!-- Quiz Header Card -->
         <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">Тематический квиз</span>
-            <h2 class="text-xl font-bold text-slate-900 mt-1">Казахстан в XVI–XVII веках</h2>
-            <p class="text-xs text-slate-500 mt-1">Предмет: История Казахстана (10 класс)</p>
+            <span id="quiz-topic-badge" class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+              Тематический квиз
+            </span>
+            <h2 id="quiz-title" class="text-xl font-bold text-slate-900 mt-1">Казахстан в XVI–XVII веках</h2>
+            <p id="quiz-sub" class="text-xs text-slate-500 mt-1">Предмет: История Казахстана (10 класс)</p>
           </div>
           <div class="bg-slate-100 px-4 py-2 rounded-lg text-center flex items-center gap-3">
             <i class="fa-regular fa-clock text-amber-600 text-lg"></i>
             <div class="text-left">
-              <div class="text-xs text-slate-500">Таймер</div>
-              <div id="quiz-timer" class="font-mono font-bold text-slate-800">02:45</div>
+              <div class="text-xs text-slate-500">Осталось времени</div>
+              <div id="quiz-timer" class="font-mono font-bold text-slate-800">03:00</div>
             </div>
           </div>
         </div>
@@ -216,14 +121,14 @@
         <!-- Quiz Container -->
         <div id="quiz-container" class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
           <div class="flex justify-between items-center text-xs text-slate-500 border-b pb-3">
-            <span>Вопрос <strong id="q-num">1</strong> из 5</span>
-            <span id="telemetry-status" class="text-blue-600 flex items-center gap-1">
-              <i class="fa-solid fa-microchip"></i> Анализ времени...
+            <span>Вопрос <strong id="q-num">1</strong> из <span id="q-total">5</span></span>
+            <span id="telemetry-status" class="text-blue-600 flex items-center gap-1 font-medium">
+              <i class="fa-solid fa-brain"></i> Анализ прогресса в реальном времени
             </span>
           </div>
 
-          <h3 id="q-text" class="text-base font-semibold text-slate-800">
-            В период правления какого хана Казахское ханство достигло наибольшего могущества в XVI веке?
+          <h3 id="q-text" class="text-base font-semibold text-slate-800 min-h-[48px]">
+            Загрузка вопроса...
           </h3>
 
           <div id="q-options" class="space-y-3">
@@ -231,47 +136,45 @@
           </div>
 
           <div class="flex justify-between items-center pt-4 border-t">
-            <button onclick="prevQuestion()" class="text-xs text-slate-500 hover:text-slate-800 font-medium px-3 py-2">
+            <button id="prev-btn" onclick="prevQuestion()" class="text-xs text-slate-500 hover:text-slate-800 font-medium px-3 py-2 disabled:opacity-30" disabled>
               <i class="fa-solid fa-arrow-left mr-1"></i> Назад
             </button>
-            <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition">
+            <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition disabled:opacity-50">
               Ответить <i class="fa-solid fa-arrow-right ml-1"></i>
             </button>
           </div>
         </div>
 
-        <!-- Quiz Result & Smart Gap Analysis (Hidden initially) -->
+        <!-- Quiz Result & Smart Gap Analysis -->
         <div id="quiz-results" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
           <div class="text-center space-y-2">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+            <div id="result-icon" class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
               <i class="fa-solid fa-check"></i>
             </div>
             <h2 class="text-2xl font-bold text-slate-900">Квиз завершен!</h2>
-            <p class="text-sm text-slate-500">Ваш результат: <strong class="text-emerald-600 text-lg">4 / 5</strong> (80%)</p>
+            <p class="text-sm text-slate-500">
+              Ваш результат: <strong id="result-score" class="text-emerald-600 text-lg">0 / 0</strong> (<span id="result-percent">0%</span>)
+            </p>
           </div>
 
           <!-- Smart Gap Analysis Recommendations -->
-          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+          <div id="gap-analysis-box" class="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
             <div class="flex items-center gap-2 text-amber-900 font-semibold text-sm">
-              <i class="fa-solid fa-lightbulb text-amber-600"></i> Рекомендации по устранению пробелов:
+              <i class="fa-solid fa-lightbulb text-amber-600"></i> Рекомендации по устранению пробелов (Smart Gap):
             </div>
-            <p class="text-xs text-amber-800 leading-relaxed">
-              Вы допустили ошибку в вопросе по внешнеполитической деятельности Хакназар-хана. Рекомендуем повторить материалы учебника:
-            </p>
-            <div class="bg-white p-3 rounded border border-amber-200 flex justify-between items-center text-xs">
-              <div>
-                <strong class="text-slate-800">Учебник Истории Казахстана (10 кл)</strong>
-                <p class="text-slate-500">§14. Правление Хакназар-хана, стр. 82–86</p>
-              </div>
-              <button onclick="openPdfModal('История Казахстана', 'Атамұра')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-medium">
-                Открыть §14
-              </button>
+            <div id="gap-recommendations" class="space-y-2 text-xs text-amber-800 leading-relaxed">
+              <!-- Rendered dynamically -->
             </div>
           </div>
 
-          <button onclick="resetQuiz()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 rounded-lg text-sm">
-            Пройти квиз заново
-          </button>
+          <div class="flex gap-3">
+            <button onclick="resetQuiz()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2.5 rounded-lg text-sm transition">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Пересдать
+            </button>
+            <button onclick="switchTab('textbooks')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition">
+              <i class="fa-solid fa-book mr-1"></i> К учебникам
+            </button>
+          </div>
         </div>
 
       </div>
@@ -284,7 +187,7 @@
         <!-- User Info -->
         <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
           <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-bold text-xl">
+            <div id="cab-avatar" class="w-14 h-14 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-bold text-xl">
               АК
             </div>
             <div>
@@ -297,7 +200,7 @@
           <div class="border-t pt-4 space-y-2 text-xs text-slate-600">
             <div class="flex justify-between">
               <span>Школа:</span>
-              <strong class="text-slate-800">Школа-гимназия №83 (г. Астана)</strong>
+              <strong id="cab-school" class="text-slate-800">Школа-гимназия №83 (г. Астана)</strong>
             </div>
             <div class="flex justify-between">
               <span>ID пользователя:</span>
@@ -306,7 +209,7 @@
           </div>
         </div>
 
-        <!-- Learning Progress (Прогресс обучения) -->
+        <!-- Learning Progress -->
         <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
           <div>
             <h3 class="text-lg font-bold text-slate-900">Прогресс обучения</h3>
@@ -337,7 +240,6 @@
           <div class="space-y-4">
             <h4 class="text-sm font-semibold text-slate-800">Успеваемость по предметам</h4>
 
-            <!-- Subject 1 -->
             <div class="space-y-1">
               <div class="flex justify-between text-xs font-medium">
                 <span class="text-slate-700">Информатика</span>
@@ -348,7 +250,6 @@
               </div>
             </div>
 
-            <!-- Subject 2 -->
             <div class="space-y-1">
               <div class="flex justify-between text-xs font-medium">
                 <span class="text-slate-700">Физика</span>
@@ -359,21 +260,9 @@
               </div>
             </div>
 
-            <!-- Subject 3 -->
             <div class="space-y-1">
               <div class="flex justify-between text-xs font-medium">
-                <span class="text-slate-700">Казахский язык</span>
-                <span class="text-slate-900 font-bold">88%</span>
-              </div>
-              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                <div class="bg-blue-500 h-full rounded-full" style="width: 88%"></div>
-              </div>
-            </div>
-
-            <!-- Subject 4 -->
-            <div class="space-y-1">
-              <div class="flex justify-between text-xs font-medium">
-                <span class="text-slate-700">Математика</span>
+                <span class="text-slate-700">Алгебра</span>
                 <span class="text-slate-900 font-bold">85%</span>
               </div>
               <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
@@ -381,7 +270,6 @@
               </div>
             </div>
 
-            <!-- Subject 5 -->
             <div class="space-y-1">
               <div class="flex justify-between text-xs font-medium">
                 <span class="text-slate-700">История Казахстана</span>
@@ -428,7 +316,7 @@
       <!-- Modal Header -->
       <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
         <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-file-pdf text-red-400"></i>
+          <i class="fa-solid fa-file-pdf text-red-400 text-lg"></i>
           <div>
             <h3 id="modal-book-title" class="font-bold text-sm">Учебник</h3>
             <p id="modal-book-publisher" class="text-xs text-slate-400">Издательство</p>
@@ -439,33 +327,17 @@
         </button>
       </div>
 
-      <!-- Modal Body (Simulated Reader) -->
+      <!-- Modal Body -->
       <div class="flex-grow bg-slate-200 p-6 overflow-y-auto flex justify-center">
-        <div class="bg-white shadow-lg rounded p-8 max-w-2xl w-full text-slate-800 space-y-4 text-sm leading-relaxed">
-          <div class="border-b pb-2 flex justify-between text-xs text-slate-400">
-            <span>Глава 3. Казахское ханство в XVI веке</span>
-            <span>Стр. 82</span>
-          </div>
-          <h2 class="text-xl font-bold text-slate-900">§14. Правление Хакназар-хана (1538–1580 гг.)</h2>
-          <p>
-            В середине XVI века Казахское ханство переживало период государственного подъема. Хакназар-хан вошел в историю как выдающийся правитель, сумевший восстановить территориальную целостность страны после периода междоусобиц.
-          </p>
-          <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 my-4">
-            <strong class="text-amber-900 block font-semibold mb-1">Ключевой исторический факт:</strong>
-            <p class="text-xs text-amber-800">
-              Хакназар-хан заключил стратегический «Клятвенный союз» с бухарским ханом Абдуллой II, что позволило обезопасить южные границы Казахского ханства.
-            </p>
-          </div>
-          <p>
-            В результате успешной внешней политики границы Казахского ханства расширились на западе до Ногайской Орды, а на севере — до Сибирского ханства.
-          </p>
+        <div id="modal-pdf-content" class="bg-white shadow-lg rounded p-8 max-w-2xl w-full text-slate-800 space-y-4 text-sm leading-relaxed">
+          <!-- Rendered dynamically -->
         </div>
       </div>
 
       <!-- Modal Footer -->
       <div class="bg-slate-100 p-3 border-t flex justify-between items-center text-xs text-slate-600">
-        <div>Страница 82 из 240</div>
-        <button onclick="closePdfModal(); switchTab('quizzes');" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <div id="modal-page-info">Страница 1 из 240</div>
+        <button id="modal-quiz-link" onclick="closePdfModal(); switchTab('quizzes');" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition flex items-center gap-2">
           <i class="fa-solid fa-gamepad"></i> Закрепить квизом
         </button>
       </div>
@@ -473,9 +345,172 @@
     </div>
   </div>
 
-  <!-- JavaScript Logic -->
+  <!-- JavaScript Application Logic -->
   <script>
-    // Tab Switching
+    // --- DATABASE: Textbooks Data ---
+    const textbooksData = [
+      {
+        id: "hist10",
+        title: "История Казахстана",
+        grade: "10",
+        subjectKey: "history",
+        publisher: "Атамұра",
+        colorClass: "bg-amber-600",
+        quizCount: 12,
+        quizId: "hist10_q",
+        sampleParagraph: {
+          title: "§14. Правление Хакназар-хана (1538–1580 гг.)",
+          page: 82,
+          totalPages: 210,
+          text: "В середине XVI века Казахское ханство переживало период государственного подъема. Хакназар-хан вошел в историю как выдающийся правитель, сумевший восстановить территориальную целостность страны после периода междоусобиц.",
+          keyFact: "Хакназар-хан заключил стратегический «Клятвенный союз» с бухарским ханом Абдуллой II, что позволило обезопасить южные границы Казахского ханства."
+        }
+      },
+      {
+        id: "alg10",
+        title: "Алгебра и начала анализа",
+        grade: "10",
+        subjectKey: "math",
+        publisher: "Мектеп",
+        colorClass: "bg-blue-600",
+        quizCount: 15,
+        quizId: "alg10_q",
+        sampleParagraph: {
+          title: "§8. Производная тригонометрических функций",
+          page: 54,
+          totalPages: 195,
+          text: "Производная функции y = sin(x) равна cos(x). Нахождение производных сложных функций требует применения правила дифференцирования внешней и внутренней функции.",
+          keyFact: "Формула: (sin x)' = cos x; (cos x)' = -sin x."
+        }
+      },
+      {
+        id: "cs10",
+        title: "Информатика",
+        grade: "10",
+        subjectKey: "cs",
+        publisher: "Арман-ПВ",
+        colorClass: "bg-teal-600",
+        quizCount: 10,
+        quizId: "cs10_q",
+        sampleParagraph: {
+          title: "§21. Архитектура веб-приложений и API",
+          page: 112,
+          totalPages: 180,
+          text: "REST API представляет собой архитектурный стиль взаимодействия клиентов и серверов через протокол HTTP с использованием базовых методов: GET, POST, PUT, DELETE.",
+          keyFact: "Метод GET используется для получения данных, а POST — для отправки новых данных на сервер."
+        }
+      },
+      {
+        id: "phys10",
+        title: "Физика",
+        grade: "10",
+        subjectKey: "physics",
+        publisher: "Мектеп",
+        colorClass: "bg-indigo-600",
+        quizCount: 8,
+        quizId: "phys10_q",
+        sampleParagraph: {
+          title: "§12. Законы термодинамики",
+          page: 90,
+          totalPages: 230,
+          text: "Первый закон термодинамики утверждает, что количество теплоты, переданное системе, идет на изменение ее внутренней энергии и совершение системой работы против внешних сил.",
+          keyFact: "Формула: Q = ΔU + A."
+        }
+      },
+      {
+        id: "geo10",
+        title: "География Казахстана",
+        grade: "10",
+        subjectKey: "geo",
+        publisher: "Алматыкітап",
+        colorClass: "bg-emerald-600",
+        quizCount: 11,
+        quizId: "geo10_q",
+        sampleParagraph: {
+          title: "§18. Природно-ресурсный потенциал РК",
+          page: 75,
+          totalPages: 200,
+          text: "Казахстан занимает 1-е место в мире по запасам вольфрама, 2-е по фосфоритам и хромовым рудам, а также входит в лидеры по добыче урана.",
+          keyFact: "Основные бассейны добычи угля: Карагандинский и Экибастузский."
+        }
+      }
+    ];
+
+    // --- DATABASE: Quizzes Data ---
+    const quizzesDatabase = {
+      "hist10_q": {
+        title: "Казахстан в XVI–XVII веках",
+        subject: "История Казахстана (10 класс)",
+        timeLimit: 180, // seconds
+        questions: [
+          {
+            q: "В период правления какого хана Казахское ханство достигло наибольшего могущества в середине XVI века?",
+            options: ["Касым-хан", "Хакназар-хан", "Тауекель-хан", "Есим-хан"],
+            correct: 1,
+            refText: "§14. Правление Хакназар-хана, стр. 82–86",
+            refBook: "История Казахстана"
+          },
+          {
+            q: "С каким правителем Бухары Хакназар-хан заключил стратегический «Клятвенный союз»?",
+            options: ["Абдулла II", "Бабур", "Мухаммед Шейбани", "Имамкули"],
+            correct: 0,
+            refText: "§14. Правление Хакназар-хана, стр. 84",
+            refBook: "История Казахстана"
+          },
+          {
+            q: "Какой хан принял свод законов «Жеті Жарғы» в конце XVII века?",
+            options: ["Хакназар-хан", "Жангир-хан", "Тауке-хан", "Аблай-хан"],
+            correct: 2,
+            refText: "§22. Законы Тауке-хана «Жеті Жарғы», стр. 110",
+            refBook: "История Казахстана"
+          },
+          {
+            q: "В каком сражении 1643 года Жангир-хан с 600 воинами сдерживал 50-тысячное джунгарское войско?",
+            options: ["Аныракайская битва", "Орбулакская битва", "Битва при Рамитане", "Каталаунская битва"],
+            correct: 1,
+            refText: "§19. Орбулакская битва, стр. 98",
+            refBook: "История Казахстана"
+          },
+          {
+            q: "Столицей Казахского ханства при Есим-хане стал город:",
+            options: ["Сыганак", "Туркестан", "Тараз", "Сарайчик"],
+            correct: 1,
+            refText: "§17. Внутренняя политика Есим-хана, стр. 92",
+            refBook: "История Казахстана"
+          }
+        ]
+      },
+      "cs10_q": {
+        title: "Основы Web-технологий и API",
+        subject: "Информатика (10 класс)",
+        timeLimit: 150,
+        questions: [
+          {
+            q: "Какой HTTP-метод используется для отправки данных и создания новых ресурсов?",
+            options: ["GET", "POST", "DELETE", "OPTIONS"],
+            correct: 1,
+            refText: "§21. Архитектура API, стр. 112",
+            refBook: "Информатика"
+          },
+          {
+            q: "Что из перечисленного является форматом обмена данными в веб-сервисах?",
+            options: ["JSON", "PNG", "MP3", "EXE"],
+            correct: 0,
+            refText: "§22. Форматы данных JSON/XML, стр. 118",
+            refBook: "Информатика"
+          }
+        ]
+      }
+    };
+
+    // --- State Variables ---
+    let currentQuizId = "hist10_q";
+    let currentQuestionIdx = 0;
+    let userAnswers = {};
+    let timerInterval = null;
+    let secondsLeft = 180;
+
+    // --- Tab Switcher ---
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById('tab-' + tabId).classList.add('active');
@@ -490,37 +525,120 @@
         activeBtn.classList.add('bg-blue-800', 'text-white');
         activeBtn.classList.remove('text-blue-200');
       }
+
+      if (tabId === 'quizzes' && !timerInterval) {
+        startQuiz(currentQuizId);
+      }
     }
 
-    // Role Switcher
+    // --- Role Switcher ---
     function changeRole(role) {
       const nameElem = document.getElementById('user-display-name');
       const subElem = document.getElementById('user-display-sub');
       const cabName = document.getElementById('cab-user-name');
       const cabRole = document.getElementById('cab-user-role');
+      const cabAvatar = document.getElementById('cab-avatar');
 
       if (role === 'student') {
         nameElem.innerText = 'Алихан Кайдаров';
         subElem.innerText = '10 "А" класс, Школа-гимназия №83 г. Астана';
         cabName.innerText = 'Алихан Кайдаров';
         cabRole.innerText = 'Ученик 10 "А" класса';
+        cabAvatar.innerText = 'АК';
       } else if (role === 'teacher') {
         nameElem.innerText = 'Алия Жумабекова';
         subElem.innerText = 'Учитель истории, Школа-гимназия №83';
         cabName.innerText = 'Алия Жумабекова';
         cabRole.innerText = 'Учитель высшей категории';
+        cabAvatar.innerText = 'АЖ';
       } else if (role === 'parent') {
         nameElem.innerText = 'Кайрат Кайдаров';
         subElem.innerText = 'Родитель (Алихан Кайдаров)';
         cabName.innerText = 'Кайрат Кайдаров';
         cabRole.innerText = 'Кабинет родителя';
+        cabAvatar.innerText = 'КК';
       }
     }
 
-    // PDF Modal Logic
-    function openPdfModal(title, publisher) {
-      document.getElementById('modal-book-title').innerText = title;
-      document.getElementById('modal-book-publisher').innerText = 'Издательство: ' + publisher;
+    // --- Render Textbooks ---
+    function renderTextbooks() {
+      const grid = document.getElementById('books-grid');
+      const gradeVal = document.getElementById('grade-filter').value;
+      const subjectVal = document.getElementById('subject-filter').value;
+
+      const filtered = textbooksData.filter(b => {
+        const matchGrade = (gradeVal === 'all' || b.grade === gradeVal);
+        const matchSubject = (subjectVal === 'all' || b.subjectKey === subjectVal);
+        return matchGrade && matchSubject;
+      });
+
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center text-slate-500 py-8">Учебников по выбранным фильтрам не найдено.</div>`;
+        return;
+      }
+
+      filtered.forEach(book => {
+        const card = document.createElement('div');
+        card.className = "bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col";
+        card.innerHTML = `
+          <div class="${book.colorClass} text-white p-4 h-40 flex flex-col justify-between relative">
+            <span class="bg-black/30 backdrop-blur-md text-xs px-2 py-1 rounded self-start">Kazakhtelecom PDF</span>
+            <div>
+              <span class="text-xs uppercase tracking-wider opacity-80">${book.grade} Класс</span>
+              <h3 class="font-bold text-lg leading-tight">${book.title}</h3>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div class="text-xs text-slate-500 space-y-1 mb-4">
+              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>${book.publisher}</strong></p>
+              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>${book.quizCount} тем</strong></p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="openPdfModal('${book.id}')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Читать PDF
+              </button>
+              <button onclick="launchQuizForBook('${book.quizId}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> Пройти квиз
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterTextbooks() {
+      renderTextbooks();
+    }
+
+    // --- PDF Modal Logic ---
+    function openPdfModal(bookId) {
+      const book = textbooksData.find(b => b.id === bookId);
+      if (!book) return;
+
+      document.getElementById('modal-book-title').innerText = book.title + " (" + book.grade + " класс)";
+      document.getElementById('modal-book-publisher').innerText = 'Издательство: ' + book.publisher;
+      document.getElementById('modal-page-info').innerText = `Страница ${book.sampleParagraph.page} из ${book.sampleParagraph.totalPages}`;
+
+      const content = document.getElementById('modal-pdf-content');
+      content.innerHTML = `
+        <div class="border-b pb-2 flex justify-between text-xs text-slate-400">
+          <span>Раздел 3. Учебный материал</span>
+          <span>Стр. ${book.sampleParagraph.page}</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">${book.sampleParagraph.title}</h2>
+        <p>${book.sampleParagraph.text}</p>
+        <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 my-4">
+          <strong class="text-amber-900 block font-semibold mb-1">Ключевой факт параграфа:</strong>
+          <p class="text-xs text-amber-800">${book.sampleParagraph.keyFact}</p>
+        </div>
+        <p class="text-slate-500 text-xs italic">
+          Электронное издание сертифицировано и соответствует Государственному общеобязательному стандарту образования (ГОСО РК).
+        </p>
+      `;
+
       document.getElementById('pdf-modal').classList.remove('hidden');
     }
 
@@ -528,76 +646,166 @@
       document.getElementById('pdf-modal').classList.add('hidden');
     }
 
-    // Quiz Questions Data
-    const questions = [
-      {
-        q: "В период правления какого хана Казахское ханство достигло наибольшего могущества в XVI веке?",
-        options: ["Касым-хан", "Хакназар-хан", "Тауекель-хан", "Есим-хан"],
-        correct: 1
-      },
-      {
-        q: "С каким правителем Бухары Хакназар-хан заключил «Клятвенный союз»?",
-        options: ["Абдулла II", "Бабур", "Мухаммед Шейбани", "Имамкули"],
-        correct: 0
-      }
-    ];
+    // --- Quiz Engine Logic ---
+    function launchQuizForBook(quizId) {
+      currentQuizId = quizId in quizzesDatabase ? quizId : "hist10_q";
+      switchTab('quizzes');
+      startQuiz(currentQuizId);
+    }
 
-    let currentQ = 0;
-    let selectedOption = null;
+    function startQuiz(qId) {
+      clearInterval(timerInterval);
+      currentQuizId = qId;
+      const quiz = quizzesDatabase[currentQuizId];
+
+      document.getElementById('quiz-title').innerText = quiz.title;
+      document.getElementById('quiz-sub').innerText = "Предмет: " + quiz.subject;
+      document.getElementById('q-total').innerText = quiz.questions.length;
+
+      currentQuestionIdx = 0;
+      userAnswers = {};
+      secondsLeft = quiz.timeLimit;
+
+      document.getElementById('quiz-container').classList.remove('hidden');
+      document.getElementById('quiz-results').classList.add('hidden');
+
+      renderTimer();
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        renderTimer();
+        if (secondsLeft <= 0) {
+          clearInterval(timerInterval);
+          finishQuiz();
+        }
+      }, 1000);
+
+      renderQuestion();
+    }
+
+    function renderTimer() {
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      document.getElementById('quiz-timer').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
 
     function renderQuestion() {
-      const q = questions[currentQ];
-      document.getElementById('q-num').innerText = currentQ + 1;
+      const quiz = quizzesDatabase[currentQuizId];
+      const q = quiz.questions[currentQuestionIdx];
+
+      document.getElementById('q-num').innerText = currentQuestionIdx + 1;
       document.getElementById('q-text').innerText = q.q;
 
       const optsContainer = document.getElementById('q-options');
       optsContainer.innerHTML = '';
 
       q.options.forEach((opt, idx) => {
+        const isSelected = userAnswers[currentQuestionIdx] === idx;
         const btn = document.createElement('button');
-        btn.className = `w-full text-left p-3.5 rounded-lg border border-slate-200 text-sm font-medium hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between group`;
-        btn.onclick = () => selectOption(idx, btn);
+        btn.className = `w-full text-left p-3.5 rounded-lg border text-sm font-medium transition flex items-center justify-between group ${
+          isSelected 
+            ? 'border-blue-600 bg-blue-50 text-blue-900' 
+            : 'border-slate-200 text-slate-700 hover:border-blue-400 hover:bg-slate-50'
+        }`;
+        
+        btn.onclick = () => selectOption(idx);
         btn.innerHTML = `
           <span>${opt}</span>
-          <div class="w-4 h-4 rounded-full border border-slate-300 group-hover:border-blue-500 flex items-center justify-center">
-            <div class="w-2 h-2 rounded-full bg-blue-600 hidden"></div>
+          <div class="w-5 h-5 rounded-full border ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300'} flex items-center justify-center">
+            <i class="fa-solid fa-check text-white text-xs ${isSelected ? '' : 'hidden'}"></i>
           </div>
         `;
         optsContainer.appendChild(btn);
       });
+
+      document.getElementById('prev-btn').disabled = currentQuestionIdx === 0;
+      const nextBtn = document.getElementById('next-btn');
+      if (currentQuestionIdx === quiz.questions.length - 1) {
+        nextBtn.innerHTML = 'Завершить <i class="fa-solid fa-flag-checkered ml-1"></i>';
+      } else {
+        nextBtn.innerHTML = 'Далее <i class="fa-solid fa-arrow-right ml-1"></i>';
+      }
     }
 
-    function selectOption(idx, btn) {
-      selectedOption = idx;
-      document.querySelectorAll('#q-options button').forEach(b => {
-        b.classList.remove('border-blue-600', 'bg-blue-50');
-        b.querySelector('.w-2').classList.add('hidden');
-      });
-      btn.classList.add('border-blue-600', 'bg-blue-50');
-      btn.querySelector('.w-2').classList.remove('hidden');
+    function selectOption(idx) {
+      userAnswers[currentQuestionIdx] = idx;
+      renderQuestion();
     }
 
     function nextQuestion() {
-      if (currentQ < questions.length - 1) {
-        currentQ++;
+      const quiz = quizzesDatabase[currentQuizId];
+      if (currentQuestionIdx < quiz.questions.length - 1) {
+        currentQuestionIdx++;
         renderQuestion();
       } else {
-        document.getElementById('quiz-container').classList.add('hidden');
-        document.getElementById('quiz-results').classList.remove('hidden');
+        finishQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIdx > 0) {
+        currentQuestionIdx--;
+        renderQuestion();
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      const quiz = quizzesDatabase[currentQuizId];
+      let correctCount = 0;
+      const mistakes = [];
+
+      quiz.questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+          correctCount++;
+        } else {
+          mistakes.push({
+            question: q.q,
+            refText: q.refText,
+            refBook: q.refBook
+          });
+        }
+      });
+
+      const total = quiz.questions.length;
+      const percent = Math.round((correctCount / total) * 100);
+
+      document.getElementById('quiz-container').classList.add('hidden');
+      document.getElementById('quiz-results').classList.remove('hidden');
+
+      document.getElementById('result-score').innerText = `${correctCount} / ${total}`;
+      document.getElementById('result-percent').innerText = `${percent}%`;
+
+      const gapBox = document.getElementById('gap-recommendations');
+      gapBox.innerHTML = '';
+
+      if (mistakes.length === 0) {
+        gapBox.innerHTML = `<p class="text-emerald-700 font-medium"><i class="fa-solid fa-circle-check mr-1"></i> Отличная работа! Вы правильно ответили на все вопросы темы.</p>`;
+      } else {
+        mistakes.forEach(m => {
+          const item = document.createElement('div');
+          item.className = "bg-white p-3 rounded border border-amber-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+          item.innerHTML = `
+            <div>
+              <strong class="text-slate-800 font-semibold block">${m.refBook}</strong>
+              <p class="text-slate-500 text-xs">${m.refText}</p>
+            </div>
+            <button onclick="openPdfModal('hist10')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-medium text-xs whitespace-nowrap transition">
+              Открыть параграф
+            </button>
+          `;
+          gapBox.appendChild(item);
+        });
       }
     }
 
     function resetQuiz() {
-      currentQ = 0;
-      selectedOption = null;
-      document.getElementById('quiz-results').classList.add('hidden');
-      document.getElementById('quiz-container').classList.remove('hidden');
-      renderQuestion();
+      startQuiz(currentQuizId);
     }
 
-    // Initialize Page
+    // --- Initialize Page ---
     window.onload = function() {
-      renderQuestion();
+      renderTextbooks();
     };
   </script>
 </body>
