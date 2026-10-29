@@ -1,246 +1,608 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@1,100..900&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Yanone+Kaffeesatz:wght@200..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MektepHub — Единая цифровая образовательная платформа</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
 </head>
-<body>
-    <header class="header">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-        <div class="header-top">
-            <h1>Экскурс по Экзо-Планетам</h1>
+  <!-- Header -->
+  <header class="bg-blue-900 text-white shadow-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      
+      <!-- Logo & Status -->
+      <div class="flex items-center space-x-3">
+        <div class="bg-cyan-500 text-blue-950 p-2 rounded-lg font-bold text-xl tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap"></i> MektepHub
+        </div>
+        <span class="bg-blue-800 text-cyan-300 text-xs px-2.5 py-1 rounded-full flex items-center gap-1 border border-cyan-500/30">
+          <i class="fa-solid fa-shield-halved"></i> Защищено
+        </span>
+      </div>
 
-            <div class="menu">
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-1 md:space-x-2">
+        <button onclick="switchTab('textbooks')" id="tab-btn-textbooks" class="px-3 py-2 rounded-md text-sm font-medium transition bg-blue-800 text-white hover:bg-blue-700">
+          <i class="fa-solid fa-book mr-1"></i> Учебники
+        </button>
+        <button onclick="switchTab('quizzes')" id="tab-btn-quizzes" class="px-3 py-2 rounded-md text-sm font-medium transition text-blue-200 hover:bg-blue-800 hover:text-white">
+          <i class="fa-solid fa-list-check mr-1"></i> Квизы
+        </button>
+        <button onclick="switchTab('cabinet')" id="tab-btn-cabinet" class="px-3 py-2 rounded-md text-sm font-medium transition text-blue-200 hover:bg-blue-800 hover:text-white">
+          <i class="fa-solid fa-user-graduate mr-1"></i> Кабинет
+        </button>
+      </nav>
 
-                <ul class="menu-list">
+      <!-- Role Switcher & User Context -->
+      <div class="flex items-center space-x-3">
+        <div class="text-right hidden sm:block">
+          <p id="user-display-name" class="text-sm font-semibold text-white">Алихан Кайдаров</p>
+          <p id="user-display-sub" class="text-xs text-blue-200">10 "А" класс, Школа-гимназия №83 г. Астана</p>
+        </div>
+        <select id="role-switcher" onchange="changeRole(this.value)" class="bg-blue-950 text-cyan-300 border border-blue-700 text-xs rounded-lg p-2 focus:ring-2 focus:ring-cyan-400 outline-none">
+          <option value="student">Роль: Ученик</option>
+          <option value="teacher">Роль: Учитель</option>
+          <option value="parent">Роль: Родитель</option>
+        </select>
+      </div>
 
-                    <li class="menu-item">
+    </div>
+  </header>
 
-                        <a href="index.html" ><span class="menu-sub">Главная</span></a>
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
 
-                    </li>
+    <!-- TAB 1: TEXTBOOKS CATALOG -->
+    <section id="tab-textbooks" class="tab-content active">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Каталог учебников Казахстана</h1>
+          <p class="text-slate-500 text-sm">Цифровые учебники с привязанными интерактивными квизами</p>
+        </div>
+        
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+          <select class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option>Все классы (10 класс)</option>
+            <option>9 класс</option>
+            <option>10 класс</option>
+            <option>11 класс</option>
+          </select>
+          <select class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <option>Все предметы</option>
+            <option>История Казахстана</option>
+            <option>Математика</option>
+            <option>Физика</option>
+            <option>Информатика</option>
+          </select>
+        </div>
+      </div>
 
-                    <li class="menu-item">
-
-                        <a href="https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0" target="_blank"><span class="menu-sub">Связанное</span></a>
-
-                    </li>
-
-                    <li class="menu-item">
-
-                        <a href="https://discord.gg/morrison" target="_blank"><span class="menu-sub">Сообщество</span></a>
-
-                    </li>
-
-                    <li class="menu-item" id="desc">
-
-                        <span class="menu-sub" >Содержание</span>
-
-                        <div class="dropdown-content">
-
-                            <a href="#mainsect"><p>Выбор планеты</p></a>
-
-                            <a href="#planetInfo"><p>Информация</p></a>
-
-                            <a href="#sect1"><p>Методы</p></a>
-
-                        </div>
-
-                    </li>
-
-                </ul>
-
+      <!-- Books Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Book Card 1 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+          <div class="bg-amber-600 text-white p-4 h-40 flex flex-col justify-between relative">
+            <span class="bg-black/30 backdrop-blur-md text-xs px-2 py-1 rounded self-start">Kazakhtelecom PDF</span>
+            <div>
+              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
+              <h3 class="font-bold text-lg leading-tight">История Казахстана</h3>
             </div>
-
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div class="text-xs text-slate-500 space-y-1 mb-4">
+              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Атамұра</strong></p>
+              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>12 тем</strong></p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="openPdfModal('История Казахстана', 'Атамұра')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Читать PDF
+              </button>
+              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> Пройти квиз
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="startik" id="stars"></div>
+        <!-- Book Card 2 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+          <div class="bg-blue-600 text-white p-4 h-40 flex flex-col justify-between relative">
+            <span class="bg-black/30 backdrop-blur-md text-xs px-2 py-1 rounded self-start">Kazakhtelecom PDF</span>
+            <div>
+              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
+              <h3 class="font-bold text-lg leading-tight">Алгебра и начала анализа</h3>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div class="text-xs text-slate-500 space-y-1 mb-4">
+              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Мектеп</strong></p>
+              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>15 тем</strong></p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="openPdfModal('Алгебра и начала анализа', 'Мектеп')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Читать PDF
+              </button>
+              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> Пройти квиз
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <div id="mainsect" class="header-bottom">
-            <div class="menu-container">
+        <!-- Book Card 3 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+          <div class="bg-teal-600 text-white p-4 h-40 flex flex-col justify-between relative">
+            <span class="bg-black/30 backdrop-blur-md text-xs px-2 py-1 rounded self-start">Kazakhtelecom PDF</span>
+            <div>
+              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
+              <h3 class="font-bold text-lg leading-tight">Информатика</h3>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div class="text-xs text-slate-500 space-y-1 mb-4">
+              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Арман-ПВ</strong></p>
+              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>10 тем</strong></p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="openPdfModal('Информатика', 'Арман-ПВ')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Читать PDF
+              </button>
+              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> Пройти квиз
+              </button>
+            </div>
+          </div>
+        </div>
 
-                <button class="arrow left-arrow" onclick="rotateMenu(-1)">&#9664;</button>
+        <!-- Book Card 4 -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col">
+          <div class="bg-indigo-600 text-white p-4 h-40 flex flex-col justify-between relative">
+            <span class="bg-black/30 backdrop-blur-md text-xs px-2 py-1 rounded self-start">Kazakhtelecom PDF</span>
+            <div>
+              <span class="text-xs uppercase tracking-wider opacity-80">10 Класс</span>
+              <h3 class="font-bold text-lg leading-tight">Физика</h3>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div class="text-xs text-slate-500 space-y-1 mb-4">
+              <p><i class="fa-solid fa-building text-slate-400 mr-1"></i> Издательство: <strong>Мектеп</strong></p>
+              <p><i class="fa-solid fa-list-ol text-slate-400 mr-1"></i> Доступно квизов: <strong>8 тем</strong></p>
+            </div>
+            <div class="space-y-2">
+              <button onclick="openPdfModal('Физика', 'Мектеп')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Читать PDF
+              </button>
+              <button onclick="switchTab('quizzes')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-gamepad"></i> Пройти квиз
+              </button>
+            </div>
+          </div>
+        </div>
 
-                <div class="circle-menu">
+      </div>
+    </section>
 
-                        <div class="planet">
-                            <img class="background-image" src="img/PCHFkXjiRz05bEU3b2-Pq1YD2Ua2EjLdq2oJvaQ7Sf3aTHJ-5Lci4_exGYmqaARVZcM38vHylouJgD409BzgtrT4-removebg-preview.png" alt="">
-                            <div class="text-overlay"><p>Проксима Центавра B</p></div>
-                        </div>
+    <!-- TAB 2: QUIZZES -->
+    <section id="tab-quizzes" class="tab-content">
+      <div class="max-w-3xl mx-auto">
+        
+        <!-- Quiz Header Card -->
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">Тематический квиз</span>
+            <h2 class="text-xl font-bold text-slate-900 mt-1">Казахстан в XVI–XVII веках</h2>
+            <p class="text-xs text-slate-500 mt-1">Предмет: История Казахстана (10 класс)</p>
+          </div>
+          <div class="bg-slate-100 px-4 py-2 rounded-lg text-center flex items-center gap-3">
+            <i class="fa-regular fa-clock text-amber-600 text-lg"></i>
+            <div class="text-left">
+              <div class="text-xs text-slate-500">Таймер</div>
+              <div id="quiz-timer" class="font-mono font-bold text-slate-800">02:45</div>
+            </div>
+          </div>
+        </div>
 
-                        <div class="planet">
-                            <img class="background-image" src="img/TRAPPIST-1e_Artist_s_Impression-removebg-preview.png" alt="">
-                            <div class="text-overlay"><p>TRAPPIST-1e</p></div>
-                        </div>
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+          <div class="flex justify-between items-center text-xs text-slate-500 border-b pb-3">
+            <span>Вопрос <strong id="q-num">1</strong> из 5</span>
+            <span id="telemetry-status" class="text-blue-600 flex items-center gap-1">
+              <i class="fa-solid fa-microchip"></i> Анализ времени...
+            </span>
+          </div>
 
-                        <div class="planet">
-                            <img class="background-image" src="img/image-removebg-preview.png" alt="">
-                            <div class="text-overlay"><p>LHS 1140 b</p></div>
-                        </div>
+          <h3 id="q-text" class="text-base font-semibold text-slate-800">
+            В период правления какого хана Казахское ханство достигло наибольшего могущества в XVI веке?
+          </h3>
 
-                        <div class="planet">
-                            <img class="background-image" src="img/image-removebg-preview (1).png" alt="">
-                            <div class="text-overlay"><p>HD 209458 b</p></div>
-                        </div>
+          <div id="q-options" class="space-y-3">
+            <!-- Dynamic Options -->
+          </div>
 
-                        <div class="planet">
-                            <img class="background-image" src="img/image-removebg-preview (2).png" alt="">
-                            <div class="text-overlay"><p>Kepler-186f</p></div>
-                        </div>
+          <div class="flex justify-between items-center pt-4 border-t">
+            <button onclick="prevQuestion()" class="text-xs text-slate-500 hover:text-slate-800 font-medium px-3 py-2">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Назад
+            </button>
+            <button id="next-btn" onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition">
+              Ответить <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
 
+        <!-- Quiz Result & Smart Gap Analysis (Hidden initially) -->
+        <div id="quiz-results" class="hidden bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+          <div class="text-center space-y-2">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900">Квиз завершен!</h2>
+            <p class="text-sm text-slate-500">Ваш результат: <strong class="text-emerald-600 text-lg">4 / 5</strong> (80%)</p>
+          </div>
+
+          <!-- Smart Gap Analysis Recommendations -->
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+            <div class="flex items-center gap-2 text-amber-900 font-semibold text-sm">
+              <i class="fa-solid fa-lightbulb text-amber-600"></i> Рекомендации по устранению пробелов:
+            </div>
+            <p class="text-xs text-amber-800 leading-relaxed">
+              Вы допустили ошибку в вопросе по внешнеполитической деятельности Хакназар-хана. Рекомендуем повторить материалы учебника:
+            </p>
+            <div class="bg-white p-3 rounded border border-amber-200 flex justify-between items-center text-xs">
+              <div>
+                <strong class="text-slate-800">Учебник Истории Казахстана (10 кл)</strong>
+                <p class="text-slate-500">§14. Правление Хакназар-хана, стр. 82–86</p>
+              </div>
+              <button onclick="openPdfModal('История Казахстана', 'Атамұра')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-medium">
+                Открыть §14
+              </button>
+            </div>
+          </div>
+
+          <button onclick="resetQuiz()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 rounded-lg text-sm">
+            Пройти квиз заново
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: USER CABINET & PROGRESS -->
+    <section id="tab-cabinet" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- User Info -->
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+          <div class="flex items-center space-x-4">
+            <div class="w-14 h-14 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-bold text-xl">
+              АК
+            </div>
+            <div>
+              <h2 id="cab-user-name" class="font-bold text-slate-900">Алихан Кайдаров</h2>
+              <p id="cab-user-role" class="text-xs text-slate-500">Ученик 10 "А" класса</p>
+              <span class="inline-block mt-1 text-[11px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">Активный профиль</span>
+            </div>
+          </div>
+
+          <div class="border-t pt-4 space-y-2 text-xs text-slate-600">
+            <div class="flex justify-between">
+              <span>Школа:</span>
+              <strong class="text-slate-800">Школа-гимназия №83 (г. Астана)</strong>
+            </div>
+            <div class="flex justify-between">
+              <span>ID пользователя:</span>
+              <strong class="font-mono text-slate-800">KZ-83-10042</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Learning Progress (Прогресс обучения) -->
+        <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Прогресс обучения</h3>
+            <p class="text-xs text-slate-500">Аналитика прохождения квизов и изучения учебных тем</p>
+          </div>
+
+          <!-- Key Metrics -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+              <div class="text-xs text-blue-600">Средний балл</div>
+              <div class="text-xl font-bold text-blue-900 mt-1">88%</div>
+            </div>
+            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+              <div class="text-xs text-emerald-600">Пройдено тем</div>
+              <div class="text-xl font-bold text-emerald-900 mt-1">28 / 35</div>
+            </div>
+            <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+              <div class="text-xs text-amber-600">Серия дней</div>
+              <div class="text-xl font-bold text-amber-900 mt-1">5 дней 🔥</div>
+            </div>
+            <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+              <div class="text-xs text-indigo-600">Цель недели</div>
+              <div class="text-xl font-bold text-indigo-900 mt-1">80%</div>
+            </div>
+          </div>
+
+          <!-- Progress by Subjects -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-semibold text-slate-800">Успеваемость по предметам</h4>
+
+            <!-- Subject 1 -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-700">Информатика</span>
+                <span class="text-slate-900 font-bold">96%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-teal-500 h-full rounded-full" style="width: 96%"></div>
+              </div>
+            </div>
+
+            <!-- Subject 2 -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-700">Физика</span>
+                <span class="text-slate-900 font-bold">90%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-indigo-500 h-full rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+
+            <!-- Subject 3 -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-700">Казахский язык</span>
+                <span class="text-slate-900 font-bold">88%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-blue-500 h-full rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+
+            <!-- Subject 4 -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-700">Математика</span>
+                <span class="text-slate-900 font-bold">85%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-blue-600 h-full rounded-full" style="width: 85%"></div>
+              </div>
+            </div>
+
+            <!-- Subject 5 -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-700">История Казахстана</span>
+                <span class="text-slate-900 font-bold">78%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-amber-500 h-full rounded-full" style="width: 78%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Achievements -->
+          <div class="border-t pt-4">
+            <h4 class="text-sm font-semibold text-slate-800 mb-3">Последние достижения</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-award text-amber-500 text-lg"></i>
+                <div>
+                  <strong class="text-slate-800">Мастер Информатики</strong>
+                  <p class="text-slate-500">Пройдено 10 квизов без ошибок</p>
                 </div>
-
-                <button class="arrow right-arrow" onclick="rotateMenu(1)">&#9654;</button>
-
-            </div>
-
-            <button id="moreinfo">Подробнее о Планете!</button>
-        </div>
-
-    </header>
-    <div class="separator"></div>
-    <main>
-        <div class="center">
-            <div class="section1" id="planetInfo">
-                <h2 id="planetName" class="glow-text"></h2>
-                <p id="starName" class="glow-text"></p>
-                <p id="planetType" class="glow-text"></p>
-                <p id="distance" class="glow-text"></p>
-                <p id="discoveryYear" class="glow-text"></p>
-                <p id="description" class="glow-text"></p>
-                <ul>
-                    <li id="interestingFacts" class="glow-text"></li>
-                    <li id="interestingFacts1" class="glow-text"></li>
-                </ul>
-            </div>
-            <button id="choose">Вернутся к выбору!</button>
-        </div>
-
-        <div class="center1">
-            <div id="sect1" class="section2">
-                <h1 class="glow-text">Но как же находят эти планеты?</h1>
-
-                <div class="methods">
-                    <button onclick="showMethod('transit')">Транзитный метод</button>
-                    <button onclick="showMethod('doppler')">Метод радиальных скоростей</button>
-                    <button onclick="showMethod('microlensing')">Метод гравитационного микролинзирования</button>
-                    <button onclick="showMethod('astrometry')">Метод астрометрии</button>
-                    <button onclick="showMethod('direct_imaging')">Прямое изображение</button>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded border border-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-fire text-rose-500 text-lg"></i>
+                <div>
+                  <strong class="text-slate-800">Ударный темп</strong>
+                  <p class="text-slate-500">Занимается 5 дней подряд</p>
                 </div>
-            
-                <div id="method-info">
-                    <div id="transit" class="method-content">
-                        <h2 class="glow-text">Транзитный метод</h2>
-                        <p class="glow-text">Это один из самых популярных и эффективных методов для обнаружения экзопланет. Его используют такие телескопы, как Kepler и TESS.
-                        Как это работает: Когда экзопланета проходит перед своей звездой (то есть совершает транзит), она частично блокирует свет звезды. Астрономы могут наблюдать небольшое уменьшение яркости звезды на короткий период времени. Если такие падения яркости повторяются регулярно, это может указывать на наличие планеты.
-                        </p>
-                        <h3 class="glow-text">Плюсы</h3>
-                        <ul>
-                            <li class="glow-text">Этот метод позволяет определить размер планеты (по тому, насколько она блокирует свет звезды).</li>
-                            <li class="glow-text">Может быть использован для изучения атмосферы планеты, когда свет звезды проходит через ее атмосферу.</li>
-                        </ul>
-                        <h3 class="glow-text">Минусы</h3>
-                        <ul>
-                            <li class="glow-text">Метод работает только для планет, орбита которых расположена так, что они проходят перед звездой относительно наблюдателя на Земле.</li>
-                            <li class="glow-text">Нужны многократные наблюдения, чтобы подтвердить наличие планеты.</li>
-                        </ul>
-                    </div>
-            
-                    <div id="doppler" class="method-content">
-                        <h2 class="glow-text">Метод радиальных скоростей</h2>
-                        <p class="glow-text">Также известен как метод Доплера. Он был использован для открытия одной из первых экзопланет — 51 Пегаса b.
-                        Как это работает: Звезда и планета не просто движутся друг вокруг друга: планета тянет за собой звезду, вызывая её небольшие движения (колебания) вперед и назад. Когда звезда движется по направлению к Земле, её свет смещается в синюю область спектра, а когда удаляется — в красную. Это смещение можно измерить с помощью спектрографов.
-                        </p>
-                        <h3 class="glow-text">Плюсы</h3>
-                        <ul>
-                            <li class="glow-text">Позволяет обнаруживать планеты, которые не совершают транзиты перед своей звездой.</li>
-                            <li class="glow-text">Даёт точные данные о массе планеты.</li>
-                        </ul>
-                        <h3 class="glow-text">Минусы</h3>
-                        <ul>
-                            <li class="glow-text">Трудно обнаруживать планеты, которые находятся на больших расстояниях от своей звезды, так как их влияние на движение звезды менее заметно.   </li>
-                            <li class="glow-text">Метод чувствителен в первую очередь к массивным планетам, таким как газовые гиганты.</li>
-                        </ul>
-                    </div>
-            
-                    <div id="microlensing" class="method-content">
-                        <h2 class="glow-text">Метод гравитационного микролинзирования</h2>
-                        <p class="glow-text">Этот метод основан на эффекте гравитационного линзирования, предсказанного Эйнштейном.
-                        Как это работает: Когда одна звезда проходит перед другой, гравитация ближайшей звезды действует как линза, усиливая свет более далекой звезды. Если у ближайшей звезды есть планета, она создаст дополнительные отклонения в усиленном свете. Наблюдение за этими отклонениями позволяет обнаружить планету.
-                        </p>
-                        <h3 class="glow-text">Плюсы</h3>
-                        <ul>
-                            <li class="glow-text">Позволяет находить экзопланеты на значительном расстоянии от Земли.</li>
-                            <li class="glow-text">Может обнаруживать планеты, которые находятся далеко от своих звезд.</li>
-                        </ul>
-                        <h3 class="glow-text">Минусы</h3>
-                        <ul>
-                            <li class="glow-text">События микролинзирования редки и трудно предсказуемы.</li>
-                            <li class="glow-text">Метод не даёт возможности многократно наблюдать за одной и той же планетой, так как линзирование длится только короткое время.</li>
-                        </ul>
-                    </div>
-            
-                    <div id="astrometry" class="method-content">
-                        <h2 class="glow-text">Метод астрометрии</h2>
-                        <p class="glow-text">Это метод измерения небольших изменений в положении звезды на небесной сфере.
-
-                            Как это работает: Когда планета вращается вокруг звезды, она заставляет звезду немного смещаться в пространстве. Астрономы измеряют это смещение с высокой точностью. Если смещение повторяется регулярно, это может указывать на наличие планеты.
-
-                        </p>
-                        <h3 class="glow-text">Плюсы</h3>
-                        <ul>
-                            <li class="glow-text">Позволяет находить планеты с длинными орбитами, которые трудно обнаружить другими методами.</li>
-                        </ul>
-                        <h3 class="glow-text">Минусы</h3>
-                        <ul>
-                            <li class="glow-text">Очень сложен в реализации, так как смещение звезды очень мало.</li>
-                            <li class="glow-text">Требуется высокоточная аппаратура.</li>
-                        </ul>
-                    </div>
-            
-                    <div id="direct_imaging" class="method-content">
-                        <h2 class="glow-text">Прямое изображение</h2>
-                        <p class="glow-text">Этот метод подразумевает получение реальных изображений экзопланет с помощью специальных телескопов.
-
-                            Как это работает: Планеты намного тусклее своих звезд, что делает их обнаружение очень сложным. Однако с помощью специальных масок, блокирующих свет звезды, астрономы могут увидеть слабый свет, исходящий от планеты.
-
-                        </p>
-                        <h3 class="glow-text">Плюсы</h3>
-                        <ul>
-                            <li class="glow-text">Позволяет непосредственно изучать экзопланеты и их атмосферы.</li>
-                            <li class="glow-text">Может быть применен к молодым планетам, которые ещё излучают тепло, оставшееся от их формирования.</li>
-                        </ul>
-                        <h3 class="glow-text">Минусы</h3>
-                        <ul>
-                            <li class="glow-text">Этот метод эффективен только для планет, находящихся далеко от своей звезды.</li>
-                            <li class="glow-text">Труден для реализации, так как звезда обычно намного ярче планеты.</li>
-                        </ul>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
+
         </div>
-    </main>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2024 Сайт Никиты Ковалёва. Все права защищены.</p>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PDF Reader Modal Overlay -->
+  <div id="pdf-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-file-pdf text-red-400"></i>
+          <div>
+            <h3 id="modal-book-title" class="font-bold text-sm">Учебник</h3>
+            <p id="modal-book-publisher" class="text-xs text-slate-400">Издательство</p>
+          </div>
         </div>
-        <div class="footer-bottom">
-            <p>Сделано с <span>❤️</span> в Атырау</p>
+        <button onclick="closePdfModal()" class="text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Simulated Reader) -->
+      <div class="flex-grow bg-slate-200 p-6 overflow-y-auto flex justify-center">
+        <div class="bg-white shadow-lg rounded p-8 max-w-2xl w-full text-slate-800 space-y-4 text-sm leading-relaxed">
+          <div class="border-b pb-2 flex justify-between text-xs text-slate-400">
+            <span>Глава 3. Казахское ханство в XVI веке</span>
+            <span>Стр. 82</span>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900">§14. Правление Хакназар-хана (1538–1580 гг.)</h2>
+          <p>
+            В середине XVI века Казахское ханство переживало период государственного подъема. Хакназар-хан вошел в историю как выдающийся правитель, сумевший восстановить территориальную целостность страны после периода междоусобиц.
+          </p>
+          <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 my-4">
+            <strong class="text-amber-900 block font-semibold mb-1">Ключевой исторический факт:</strong>
+            <p class="text-xs text-amber-800">
+              Хакназар-хан заключил стратегический «Клятвенный союз» с бухарским ханом Абдуллой II, что позволило обезопасить южные границы Казахского ханства.
+            </p>
+          </div>
+          <p>
+            В результате успешной внешней политики границы Казахского ханства расширились на западе до Ногайской Орды, а на севере — до Сибирского ханства.
+          </p>
         </div>
-    </footer>
-    <script src="script.js"></script> 
-    <script>
-        document.getElementById("moreinfo").onclick = function() {
-            document.getElementById("planetInfo").scrollIntoView({ behavior: 'smooth' });
-        };
-        document.getElementById("choose").onclick = function() {
-            document.getElementById("mainsect").scrollIntoView({ behavior: 'smooth' });
-        };
-    </script>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-100 p-3 border-t flex justify-between items-center text-xs text-slate-600">
+        <div>Страница 82 из 240</div>
+        <button onclick="closePdfModal(); switchTab('quizzes');" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-gamepad"></i> Закрепить квизом
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('bg-blue-800', 'text-white');
+        btn.classList.add('text-blue-200');
+      });
+
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-800', 'text-white');
+        activeBtn.classList.remove('text-blue-200');
+      }
+    }
+
+    // Role Switcher
+    function changeRole(role) {
+      const nameElem = document.getElementById('user-display-name');
+      const subElem = document.getElementById('user-display-sub');
+      const cabName = document.getElementById('cab-user-name');
+      const cabRole = document.getElementById('cab-user-role');
+
+      if (role === 'student') {
+        nameElem.innerText = 'Алихан Кайдаров';
+        subElem.innerText = '10 "А" класс, Школа-гимназия №83 г. Астана';
+        cabName.innerText = 'Алихан Кайдаров';
+        cabRole.innerText = 'Ученик 10 "А" класса';
+      } else if (role === 'teacher') {
+        nameElem.innerText = 'Алия Жумабекова';
+        subElem.innerText = 'Учитель истории, Школа-гимназия №83';
+        cabName.innerText = 'Алия Жумабекова';
+        cabRole.innerText = 'Учитель высшей категории';
+      } else if (role === 'parent') {
+        nameElem.innerText = 'Кайрат Кайдаров';
+        subElem.innerText = 'Родитель (Алихан Кайдаров)';
+        cabName.innerText = 'Кайрат Кайдаров';
+        cabRole.innerText = 'Кабинет родителя';
+      }
+    }
+
+    // PDF Modal Logic
+    function openPdfModal(title, publisher) {
+      document.getElementById('modal-book-title').innerText = title;
+      document.getElementById('modal-book-publisher').innerText = 'Издательство: ' + publisher;
+      document.getElementById('pdf-modal').classList.remove('hidden');
+    }
+
+    function closePdfModal() {
+      document.getElementById('pdf-modal').classList.add('hidden');
+    }
+
+    // Quiz Questions Data
+    const questions = [
+      {
+        q: "В период правления какого хана Казахское ханство достигло наибольшего могущества в XVI веке?",
+        options: ["Касым-хан", "Хакназар-хан", "Тауекель-хан", "Есим-хан"],
+        correct: 1
+      },
+      {
+        q: "С каким правителем Бухары Хакназар-хан заключил «Клятвенный союз»?",
+        options: ["Абдулла II", "Бабур", "Мухаммед Шейбани", "Имамкули"],
+        correct: 0
+      }
+    ];
+
+    let currentQ = 0;
+    let selectedOption = null;
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      document.getElementById('q-num').innerText = currentQ + 1;
+      document.getElementById('q-text').innerText = q.q;
+
+      const optsContainer = document.getElementById('q-options');
+      optsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-3.5 rounded-lg border border-slate-200 text-sm font-medium hover:border-blue-500 hover:bg-blue-50/50 transition flex items-center justify-between group`;
+        btn.onclick = () => selectOption(idx, btn);
+        btn.innerHTML = `
+          <span>${opt}</span>
+          <div class="w-4 h-4 rounded-full border border-slate-300 group-hover:border-blue-500 flex items-center justify-center">
+            <div class="w-2 h-2 rounded-full bg-blue-600 hidden"></div>
+          </div>
+        `;
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(idx, btn) {
+      selectedOption = idx;
+      document.querySelectorAll('#q-options button').forEach(b => {
+        b.classList.remove('border-blue-600', 'bg-blue-50');
+        b.querySelector('.w-2').classList.add('hidden');
+      });
+      btn.classList.add('border-blue-600', 'bg-blue-50');
+      btn.querySelector('.w-2').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) {
+        currentQ++;
+        renderQuestion();
+      } else {
+        document.getElementById('quiz-container').classList.add('hidden');
+        document.getElementById('quiz-results').classList.remove('hidden');
+      }
+    }
+
+    function resetQuiz() {
+      currentQ = 0;
+      selectedOption = null;
+      document.getElementById('quiz-results').classList.add('hidden');
+      document.getElementById('quiz-container').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    // Initialize Page
+    window.onload = function() {
+      renderQuestion();
+    };
+  </script>
 </body>
 </html>
