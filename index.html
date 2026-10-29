@@ -82,7 +82,7 @@
           <select id="subject-filter" onchange="filterTextbooks()" class="bg-white border border-slate-300 text-sm rounded-lg p-2 text-slate-700 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="all">Все предметы</option>
             <option value="history">История Казахстана</option>
-            <option value="math">Алгебра и геометрия</option>
+            <option value="math">Алгебра и начала анализа</option>
             <option value="cs">Информатика</option>
             <option value="physics">Физика</option>
             <option value="geo">География</option>
@@ -98,10 +98,24 @@
 
     <!-- TAB 2: QUIZZES -->
     <section id="tab-quizzes" class="tab-content">
-      <div class="max-w-3xl mx-auto">
+      <div class="max-w-3xl mx-auto space-y-4">
         
+        <!-- Quiz Selector Dropdown -->
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3">
+          <label for="quiz-select" class="text-xs font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-blue-600"></i> Выберите предмет и тему квиза:
+          </label>
+          <select id="quiz-select" onchange="startQuiz(this.value)" class="bg-slate-50 border border-slate-300 text-sm font-medium rounded-lg p-2.5 text-slate-800 w-full sm:w-auto focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="hist10_q">История Казахстана: XVI–XVII века</option>
+            <option value="alg10_q">Алгебра: Производная функций</option>
+            <option value="cs10_q">Информатика: Web-технологии и API</option>
+            <option value="phys10_q">Физика: Законы термодинамики</option>
+            <option value="geo10_q">География: Ресурсы Казахстана</option>
+          </select>
+        </div>
+
         <!-- Quiz Header Card -->
-        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span id="quiz-topic-badge" class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">
               Тематический квиз
@@ -123,7 +137,7 @@
           <div class="flex justify-between items-center text-xs text-slate-500 border-b pb-3">
             <span>Вопрос <strong id="q-num">1</strong> из <span id="q-total">5</span></span>
             <span id="telemetry-status" class="text-blue-600 flex items-center gap-1 font-medium">
-              <i class="fa-solid fa-brain"></i> Анализ прогресса в реальном времени
+              <i class="fa-solid fa-brain"></i> Анализ ответов в реальном времени
             </span>
           </div>
 
@@ -337,7 +351,7 @@
       <!-- Modal Footer -->
       <div class="bg-slate-100 p-3 border-t flex justify-between items-center text-xs text-slate-600">
         <div id="modal-page-info">Страница 1 из 240</div>
-        <button id="modal-quiz-link" onclick="closePdfModal(); switchTab('quizzes');" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition flex items-center gap-2">
+        <button id="modal-quiz-btn" onclick="closePdfModal();" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition flex items-center gap-2">
           <i class="fa-solid fa-gamepad"></i> Закрепить квизом
         </button>
       </div>
@@ -436,12 +450,13 @@
       }
     ];
 
-    // --- DATABASE: Quizzes Data ---
+    // --- DATABASE: Subject-Specific Quizzes ---
     const quizzesDatabase = {
       "hist10_q": {
+        bookId: "hist10",
         title: "Казахстан в XVI–XVII веках",
         subject: "История Казахстана (10 класс)",
-        timeLimit: 180, // seconds
+        timeLimit: 180,
         questions: [
           {
             q: "В период правления какого хана Казахское ханство достигло наибольшего могущества в середине XVI века?",
@@ -480,8 +495,38 @@
           }
         ]
       },
+      "alg10_q": {
+        bookId: "alg10",
+        title: "Производная функций и дифференцирование",
+        subject: "Алгебра и начала анализа (10 класс)",
+        timeLimit: 180,
+        questions: [
+          {
+            q: "Чему равна производная функции f(x) = sin(x)?",
+            options: ["cos(x)", "-cos(x)", "-sin(x)", "tan(x)"],
+            correct: 0,
+            refText: "§8. Производная тригонометрических функций, стр. 54",
+            refBook: "Алгебра и начала анализа"
+          },
+          {
+            q: "Чему равна производная константы c (f(x) = c)?",
+            options: ["1", "c", "0", "x"],
+            correct: 2,
+            refText: "§5. Основные правила дифференцирования, стр. 40",
+            refBook: "Алгебра и начала анализа"
+          },
+          {
+            q: "Чему равна производная функции f(x) = x³?",
+            options: ["3x", "3x²", "x²", "3x³"],
+            correct: 1,
+            refText: "§6. Производная степенной функции, стр. 45",
+            refBook: "Алгебра и начала анализа"
+          }
+        ]
+      },
       "cs10_q": {
         title: "Основы Web-технологий и API",
+        bookId: "cs10",
         subject: "Информатика (10 класс)",
         timeLimit: 150,
         questions: [
@@ -493,11 +538,62 @@
             refBook: "Информатика"
           },
           {
-            q: "Что из перечисленного является форматом обмена данными в веб-сервисах?",
+            q: "Что из перечисленного является текстовым форматом обмена данными в веб-сервисах?",
             options: ["JSON", "PNG", "MP3", "EXE"],
             correct: 0,
             refText: "§22. Форматы данных JSON/XML, стр. 118",
             refBook: "Информатика"
+          },
+          {
+            q: "Какой протокол обеспечивает шифрованное и защищенное соединение в сети Интернет?",
+            options: ["HTTP", "HTTPS", "FTP", "UDP"],
+            correct: 1,
+            refText: "§19. Протоколы передачи данных, стр. 98",
+            refBook: "Информатика"
+          }
+        ]
+      },
+      "phys10_q": {
+        title: "Термодинамика и молекулярная физика",
+        bookId: "phys10",
+        subject: "Физика (10 класс)",
+        timeLimit: 180,
+        questions: [
+          {
+            q: "Как формулируется Первый закон термодинамики?",
+            options: ["Q = ΔU + A", "F = ma", "E = mc²", "PV = nRT"],
+            correct: 0,
+            refText: "§12. Законы термодинамики, стр. 90",
+            refBook: "Физика"
+          },
+          {
+            q: "Каким символом обозначается внутренняя энергия системы?",
+            options: ["Q", "U", "A", "T"],
+            correct: 1,
+            refText: "§10. Внутренняя энергия идеального газа, стр. 82",
+            refBook: "Физика"
+          }
+        ]
+      },
+      "geo10_q": {
+        title: "Природные ресурсы и экономика Казахстана",
+        bookId: "geo10",
+        subject: "География (10 класс)",
+        timeLimit: 150,
+        questions: [
+          {
+            q: "Какое место в мире занимает Казахстан по подтвержденным запасам вольфрама?",
+            options: ["1 место", "3 место", "5 место", "10 место"],
+            correct: 0,
+            refText: "§18. Природно-ресурсный потенциал РК, стр. 75",
+            refBook: "География Казахстана"
+          },
+          {
+            q: "Какой из перечисленных бассейнов является главным угольным бассейном Казахстана?",
+            options: ["Карагандинский", "Мангистауский", "Кашаганский", "Атырауский"],
+            correct: 0,
+            refText: "§20. Топливно-энергетический комплекс, стр. 88",
+            refBook: "География Казахстана"
           }
         ]
       }
@@ -622,6 +718,12 @@
       document.getElementById('modal-book-publisher').innerText = 'Издательство: ' + book.publisher;
       document.getElementById('modal-page-info').innerText = `Страница ${book.sampleParagraph.page} из ${book.sampleParagraph.totalPages}`;
 
+      const quizBtn = document.getElementById('modal-quiz-btn');
+      quizBtn.onclick = function() {
+        closePdfModal();
+        launchQuizForBook(book.quizId);
+      };
+
       const content = document.getElementById('modal-pdf-content');
       content.innerHTML = `
         <div class="border-b pb-2 flex justify-between text-xs text-slate-400">
@@ -649,13 +751,16 @@
     // --- Quiz Engine Logic ---
     function launchQuizForBook(quizId) {
       currentQuizId = quizId in quizzesDatabase ? quizId : "hist10_q";
+      document.getElementById('quiz-select').value = currentQuizId;
       switchTab('quizzes');
       startQuiz(currentQuizId);
     }
 
     function startQuiz(qId) {
       clearInterval(timerInterval);
-      currentQuizId = qId;
+      currentQuizId = qId in quizzesDatabase ? qId : "hist10_q";
+      document.getElementById('quiz-select').value = currentQuizId;
+      
       const quiz = quizzesDatabase[currentQuizId];
 
       document.getElementById('quiz-title').innerText = quiz.title;
@@ -762,7 +867,8 @@
           mistakes.push({
             question: q.q,
             refText: q.refText,
-            refBook: q.refBook
+            refBook: q.refBook,
+            bookId: quiz.bookId
           });
         }
       });
@@ -780,7 +886,7 @@
       gapBox.innerHTML = '';
 
       if (mistakes.length === 0) {
-        gapBox.innerHTML = `<p class="text-emerald-700 font-medium"><i class="fa-solid fa-circle-check mr-1"></i> Отличная работа! Вы правильно ответили на все вопросы темы.</p>`;
+        gapBox.innerHTML = `<p class="text-emerald-700 font-medium"><i class="fa-solid fa-circle-check mr-1"></i> Отличная работа! Вы правильно ответили на все вопросы квиза.</p>`;
       } else {
         mistakes.forEach(m => {
           const item = document.createElement('div');
@@ -790,7 +896,7 @@
               <strong class="text-slate-800 font-semibold block">${m.refBook}</strong>
               <p class="text-slate-500 text-xs">${m.refText}</p>
             </div>
-            <button onclick="openPdfModal('hist10')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-medium text-xs whitespace-nowrap transition">
+            <button onclick="openPdfModal('${m.bookId}')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded font-medium text-xs whitespace-nowrap transition">
               Открыть параграф
             </button>
           `;
